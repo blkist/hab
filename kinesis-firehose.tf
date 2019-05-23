@@ -1,11 +1,11 @@
 resource "aws_s3_bucket" "bucket" {
-  bucket = "${var.data_bucket_name}"
+  bucket = "${var.name_prefix}-${var.data_bucket_name}${local.name_suffix}"
   acl    = "private"
   tags   = "${local.common_tags}"
 }
 
 resource "aws_iam_role" "firehose_role" {
-  name = "firehose_test_role"
+  name = "${var.name_prefix}-firehose_test_role${local.name_suffix}"
 
   assume_role_policy = <<EOF
 {
@@ -24,8 +24,37 @@ resource "aws_iam_role" "firehose_role" {
 EOF
 }
 
+resource "aws_iam_role_policy" "firehose_role_policy" {
+  name = "${var.name_prefix}-firehose_role_policy${local.name_suffix}"
+  role = "${aws_iam_role.firehose_role.id}"
+
+  policy = <<EOF
+{
+   "Version": "2012-10-17",
+   "Statement": [
+       {
+           "Sid": "",
+           "Effect": "Allow",
+           "Action": [
+               "s3:AbortMultipartUpload",
+               "s3:GetBucketLocation",
+               "s3:GetObject",
+               "s3:ListBucket",
+               "s3:ListBucketMultipartUploads",
+               "s3:PutObject"
+           ],
+           "Resource": [
+               "${aws_s3_bucket.bucket.arn}",
+               "${aws_s3_bucket.bucket.arn}/*"
+           ]
+       }
+   ]
+}
+EOF
+}
+
 resource "aws_kinesis_firehose_delivery_stream" "test_stream" {
-  name        = "terraform-kinesis-firehose-test-stream"
+  name        = "${var.name_prefix}-hab-stream${local.name_suffix}"
   destination = "s3"
 
   s3_configuration {

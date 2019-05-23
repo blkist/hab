@@ -7,6 +7,7 @@ variable "account_numbers" {
 variable "region" {
   description = "AWS Region to target"
   type = "string"
+  default = "us-east-1"
 }
 
 variable "name_prefix" {
@@ -41,5 +42,5 @@ variable "env_name" {
 variable "data_bucket_name" {
   description = "Name of data bucket for firehose destination"
   type = "string"
-  default = "hab-data"
+  default = "hab-data-test-bucket-name"
 }
