@@ -47,7 +47,26 @@ resource "aws_iam_role_policy" "firehose_role_policy" {
                "${aws_s3_bucket.bucket.arn}",
                "${aws_s3_bucket.bucket.arn}/*"
            ]
-       }
+       },
+       {
+            "Sid": "AllowListCloudWatchLogGroups",
+            "Effect": "Allow",
+            "Action": "logs:DescribeLogStreams",
+            "Resource": "arn:aws:logs:${var.region}:*:*"
+        },
+        {
+            "Sid": "AllowCreatePutLogGroupsStreams",
+            "Effect": "Allow",
+            "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream",
+                "logs:CreateLogGroup"
+            ],
+            "Resource": [
+                "arn:aws:logs:${var.region}:*:log-group:/aws/kinesisfirehose/${aws_kinesis_firehose_delivery_stream.test_stream.name}",
+                "arn:aws:logs:${var.region}:*:log-group:/aws/kinesisfirehose/${aws_kinesis_firehose_delivery_stream.test_stream.name}:log-stream:*"
+            ]
+        }
    ]
 }
 EOF
