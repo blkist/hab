@@ -36,7 +36,6 @@ variable "token" {
 variable "env_name" {
   description = "Environment name string to be used for decisions and name generation"
   type = "string"
-  default = ""
 }
 
 variable "data_bucket_name" {
