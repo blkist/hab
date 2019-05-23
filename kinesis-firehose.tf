@@ -79,6 +79,8 @@ resource "aws_kinesis_firehose_delivery_stream" "test_stream" {
   s3_configuration {
     role_arn   = "${aws_iam_role.firehose_role.arn}"
     bucket_arn = "${aws_s3_bucket.bucket.arn}"
+	buffer_size        = 1
+    buffer_interval    = 60
   }
 
   tags   = "${local.common_tags}"
